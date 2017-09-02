@@ -7,7 +7,8 @@ import java.time.LocalDateTime
 
 @Document
 data class Measurement(@Id @Indexed var time: LocalDateTime,
-                       var sensors: List<Sensor>) {
+                       var sensors: List<Sensor>,
+                       var grade: Float) {
 
-    constructor() : this(LocalDateTime.now(), emptyList())
+    constructor() : this(LocalDateTime.now(), emptyList(), 0F)
 }
