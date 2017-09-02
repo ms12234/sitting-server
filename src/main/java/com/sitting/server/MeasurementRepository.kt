@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
 @Repository
-interface MeasurementRepository : MongoRepository<Measurement, String>
+interface MeasurementRepository : MongoRepository<Measurement, String> {
+    fun findByTimeBetween(begin: LocalDateTime, end: LocalDateTime): List<Measurement>
+}

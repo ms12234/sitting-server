@@ -12,23 +12,25 @@ import java.util.logging.Logger
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
         produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
 @RestController
-class Controller(private val measurementRepository: MeasurementRepository) {
-    
+class Controller(private val measurementRepository: MeasurementRepository,
+                 private val positionJudge: PositionJudge) {
+
     private val logger = Logger.getLogger(javaClass.simpleName)
 
     @PostMapping
-    fun postMeasurement(measurement: Measurement): ResponseEntity<*> {
+    fun save(measurement: Measurement): ResponseEntity<Any> {
         try {
-            measurementRepository!!.save(measurement)
-            return ResponseEntity(HttpStatus.OK)
+            positionJudge.judge(measurement)
         } catch (e: Exception) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
 
+        measurementRepository.save(measurement)
+        return ResponseEntity(HttpStatus.OK)
     }
 
     @GetMapping
-    fun getMeasurements(
+    fun get(
             @RequestParam(value = "begin")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             begin: LocalDateTime,
@@ -37,7 +39,8 @@ class Controller(private val measurementRepository: MeasurementRepository) {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             end: LocalDateTime): ResponseEntity<List<Measurement>> {
 
-        return ResponseEntity(
-                measurementRepository!!.findByTimeBetween(begin, end), HttpStatus.OK)
+        return ResponseEntity(measurementRepository.findByTimeBetween(begin, end),
+                HttpStatus.OK)
     }
 }
+
