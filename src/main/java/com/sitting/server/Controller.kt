@@ -20,7 +20,7 @@ class Controller(private val measurementRepository: MeasurementRepository,
     @PostMapping
     fun save(measurement: Measurement): ResponseEntity<Any> {
         try {
-            positionJudge.judge(measurement)
+            positionJudge.isCorrect(measurement)
         } catch (e: Exception) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }

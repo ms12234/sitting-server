@@ -1,9 +1,10 @@
 package com.sitting.server
 
 class PositionJudge {
-    fun judge(measurement: Measurement) {
-        measurement.grade = 1F
+    fun isCorrect(measurement: Measurement): Boolean {
+        measurement.sensors.filter { it.value == 0.0 }
+                .first { return false }
 
-        //todo write when sensors are placed
+        return true
     }
 }
