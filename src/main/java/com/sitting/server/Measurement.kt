@@ -3,12 +3,12 @@ package com.sitting.server
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
-import java.time.LocalDateTime
+import java.util.*
 
 @Document
-data class Measurement(@Id @Indexed var time: LocalDateTime,
+data class Measurement(@Id @Indexed var time: Date,
                        var sensors: List<Sensor>,
                        var grade: Float) {
 
-    constructor() : this(LocalDateTime.now(), emptyList(), 0F)
+    constructor() : this(Date(), emptyList(), 0F)
 }

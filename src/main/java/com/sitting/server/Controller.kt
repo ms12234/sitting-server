@@ -6,11 +6,14 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.*
 import java.util.logging.Logger
 
-@RequestMapping(path = arrayOf("measurement"),
-        consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE),
-        produces = arrayOf(MediaType.APPLICATION_JSON_VALUE))
+
+@RequestMapping(path = ["measurement"],
+        consumes = [(MediaType.APPLICATION_JSON_UTF8_VALUE)],
+        produces = [(MediaType.APPLICATION_JSON_UTF8_VALUE)])
 @RestController
 class Controller(private val measurementRepository: MeasurementRepository,
                  private val positionJudge: PositionJudge) {
@@ -18,7 +21,7 @@ class Controller(private val measurementRepository: MeasurementRepository,
     private val logger = Logger.getLogger(javaClass.simpleName)
 
     @PostMapping
-    fun save(measurement: Measurement): ResponseEntity<Any> {
+    fun save(@RequestBody measurement: Measurement): ResponseEntity<Any> {
         try {
             positionJudge.isCorrect(measurement)
         } catch (e: Exception) {
@@ -39,8 +42,12 @@ class Controller(private val measurementRepository: MeasurementRepository,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             end: LocalDateTime): ResponseEntity<List<Measurement>> {
 
-        return ResponseEntity(measurementRepository.findByTimeBetween(begin, end),
-                HttpStatus.OK)
+
+        val beginConverted = Date.from(begin.toInstant(ZoneOffset.UTC))
+        val endConverted = Date.from(end.toInstant(ZoneOffset.UTC))
+
+        return ResponseEntity(measurementRepository.
+                findByTimeBetween(beginConverted, endConverted), HttpStatus.OK)
     }
 }
 
