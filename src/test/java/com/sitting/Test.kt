@@ -5,6 +5,7 @@ import com.sitting.server.Measurement
 import com.sitting.server.Position
 import com.sitting.server.Sensor
 import org.junit.Test
+import java.sql.Timestamp
 import java.util.*
 
 class Test {
@@ -18,7 +19,7 @@ class Test {
         grades.add(Sensor(1F, 1F, Position.Bottom, 1.0))
         grades.add(Sensor(1F, 1F, Position.Bottom, 1.0))
 
-        val measurement = Measurement(Date(), grades, 1.0F)
+        val measurement = Measurement("", Timestamp(Date().time), grades, 1.0F)
         val json = serializer.writerWithDefaultPrettyPrinter()
                 .writeValueAsString(measurement)
         println(json)

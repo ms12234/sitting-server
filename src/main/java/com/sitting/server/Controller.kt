@@ -23,7 +23,7 @@ class Controller(private val measurementRepository: MeasurementRepository,
     @PostMapping
     fun save(@RequestBody measurement: Measurement): ResponseEntity<Any> {
         try {
-            positionJudge.isCorrect(measurement)
+            measurement.grade = positionJudge.isCorrect(measurement)
         } catch (e: Exception) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
@@ -41,13 +41,19 @@ class Controller(private val measurementRepository: MeasurementRepository,
             @RequestParam(value = "end")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             end: LocalDateTime): ResponseEntity<List<Measurement>> {
+        val measurements = measurementRepository.findAll()
 
+        val beginConverted = Date.from(begin.toInstant(ZoneOffset.ofHours(1)))
+        val endConverted = Date.from(end.toInstant(ZoneOffset.ofHours(1)))
 
-        val beginConverted = Date.from(begin.toInstant(ZoneOffset.UTC))
-        val endConverted = Date.from(end.toInstant(ZoneOffset.UTC))
-
-        return ResponseEntity(measurementRepository.
-                findByTimeBetween(beginConverted, endConverted), HttpStatus.OK)
+        try {
+            val found = measurementRepository.
+                    findByTimeBetween(beginConverted, endConverted)
+            return ResponseEntity(found, HttpStatus.OK)
+        } catch (e: Exception) {
+            println(e)
+            return ResponseEntity.ok(emptyList())
+        }
     }
 }
 
